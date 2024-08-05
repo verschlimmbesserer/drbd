@@ -1,0 +1,9 @@
+---
+
+- name: "disks | Partitioning Disks"
+  community.general.parted:
+    device: "{{ item['disk'] }}"
+    number: "{{ item['partitions'] }}"
+    state: "{{ item['state'] }}"
+  with_items: "{{ drbd2_disks }}"
+  when: drbd2_use_parted

@@ -1,0 +1,26 @@
+---
+
+- name: services | Ensuring drbd Service Is Enabled On Boot
+  ansible.builtin.systemd_service:
+    name: drbd
+    enabled: true
+
+- name: "just force systemd to reread configs "
+  ansible.builtin.systemd_service:
+    daemon_reload: yes
+
+- name: "enable drbd autostart"
+  ansible.builtin.systemd_service:
+    enabled: yes
+    name: drbd
+    masked: no
+
+- name: Blacklist acpi power meter
+  community.general.kernel_blacklist:
+    name: acpi_power_meter
+    state: present
+
+- name: Blacklsit impi watchdog kernel module
+  community.general.kernel_blacklist:
+    name: ipmi_watchdog
+    state: present

@@ -1,0 +1,43 @@
+resource drbd0 {
+  protocol C;
+  handlers {
+    pri-lost "echo pri-lost. Have a look at the log files. | mail -s 'DRBD Alert' root";
+    split-brain "echo split-brain. drbdadm -- --discard-my-data connect $DRBD_RESOURCE ? | mail -s 'DRBD Alert' root";
+  }
+  startup {
+    wfc-timeout  60;
+    become-primary-on both;
+  }
+  disk {
+    on-io-error   detach;
+    no-disk-barrier;
+    c-fill-target 24M;
+    c-max-rate 720M;
+ }
+  net {
+    after-sb-0pri disconnect;
+    after-sb-1pri disconnect;
+    after-sb-2pri disconnect;
+    rr-conflict disconnect;
+    allow-two-primaries yes;
+    sndbuf-size 1024k;
+    unplug-watermark 16;
+    max-buffers 36k;
+    rcvbuf-size 2048k;
+  }
+  syncer {
+    rate 1200M;
+  }
+  on {{ DRBDNODE1 }} {
+    device     /dev/drbd0;
+    disk      /dev/mapper/{{ VG0 }}-{{ LV1 }};
+    address    {{ DRBDLOCALIP }}:{{ DRBDLOCALPORT }};
+    meta-disk  /dev/mapper/{{ VG0 }}-{{ LV0 }};
+  }
+  on  {{ DRBDNODE2 }} {
+    device    /dev/drbd0;
+    disk      /dev/mapper/{{ VG0 }}-{{ LV1 }};
+    address    {{ DRBDREMOTEIP }}:{{ DRBDREMOTEPORT }};
+    meta-disk  /dev/mapper/{{ VG0 }}-{{ LV0 }};
+  }
+}

@@ -1,0 +1,13 @@
+---
+# defaults file for drbd
+drbd_disks:
+  - device: /dev/drbd0
+    disk: /dev/sdb
+    filesystem: xfs
+    partitions: 1
+    mountpoint: /usr/local/cyrus
+    resource: drbd0
+    state: present
+    use_partition: /dev/sdb1
+
+drbd_use_parted: false

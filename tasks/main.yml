@@ -1,0 +1,11 @@
+---
+# tasks file for drbd
+
+- name: Install DRBD Package
+  ansible.builtin.include_tasks: package.yml
+- name:
+  ansible.builtin.include_tasks: disks.yml
+- name: Start DRBD Service
+  ansible.builtin.include_tasks: service.yml
+- name: Configure DRBD
+  ansible.builtin.include_tasks: config.yml

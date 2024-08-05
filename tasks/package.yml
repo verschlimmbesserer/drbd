@@ -1,0 +1,7 @@
+---
+
+- name: Debian | Installing DRBD packages
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ drbd_deb_packages }}"
